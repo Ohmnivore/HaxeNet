@@ -6,6 +6,8 @@ import flixel.FlxState;
 import flixel.text.FlxText;
 import flixel.ui.FlxButton;
 import flixel.util.FlxMath;
+import enet.ENet;
+import enet.ENetEvent;
 
 /**
  * A FlxState which can be used for the game's menu.
