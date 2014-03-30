@@ -17,8 +17,5 @@ This is my first adventure in C/C++, so that part of the code might not be stell
 The .ndll provided has been compiled for Windows. I honestly don't know how to provide support for Linux and Mac, sorry. If someone could help for that it would be great.
 
 TODO:
-add bindings for disconnect (soft and abrupt)
-make sure everything is garbage collected
-add universal value checking
-add access to peer rtt/ping
+make sure everything is garbage collected?
 Linux + Mac + Android? ndlls

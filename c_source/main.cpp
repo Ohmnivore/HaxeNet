@@ -39,14 +39,16 @@ static value enet_init(void)
         val_type_null, in which case the binding is to ENET_HOST_ANY
         </doc>
 **/
-static value enet_create_server( value ip, value port, value channels, value connections) {
-        ENetAddress address;
-        ENetHost *s;
+static value enet_create_server( value ip, value port, value channels, value connections)
+{
         val_check(connections, int);
         val_check(channels, int);
         val_check(port, int);
         if (!val_is_null(ip))
             val_check(ip, string);
+
+        ENetAddress address;
+        ENetHost *s;
 
         address.port = (enet_uint16)val_int(port);
         if (!val_is_null(ip))
@@ -110,10 +112,12 @@ static value enet_create_client( value Ip, value Port, value Channels, value Con
 
 static value enet_poll(value h, value timeout)
 {
+    val_check(timeout, number);
+    val_is_kind(h, k_host);
+
     ENetEvent *event;
     int res;
 
-    val_check(timeout,number);
     enet_uint32 tout = (enet_uint32)(val_number(timeout)*1000);
 
     event = (ENetEvent *) enet_malloc (sizeof (ENetEvent));
@@ -132,6 +136,8 @@ static value enet_poll(value h, value timeout)
 
 static value enet_event_type(value e)
 {
+    val_is_kind(e, k_event);
+
     ENetEvent *event;
 
     event = (ENetEvent *)val_data(e);
@@ -141,6 +147,8 @@ static value enet_event_type(value e)
 
 static value enet_event_channel(value e)
 {
+    val_is_kind(e, k_event);
+
     ENetEvent *event;
     enet_uint8 ch;
 
@@ -155,6 +163,8 @@ static value enet_event_channel(value e)
 
 static value enet_event_message(value e)
 {
+    val_is_kind(e, k_event);
+
     ENetEvent *event;
     unsigned char *str;
 
@@ -168,6 +178,8 @@ static value enet_event_message(value e)
 
 static value enet_event_peer(value e)
 {
+    val_is_kind(e, k_event);
+
     ENetEvent *event;
     event = (ENetEvent *)val_data(e);
 
@@ -177,8 +189,45 @@ static value enet_event_peer(value e)
     return alloc_string(ss.str().c_str());
 }
 
+static value enet_disconnect_peer( value host, value addnport, value force )
+{
+    val_check(addnport, string);
+    val_check(force, bool);
+    val_is_kind(host, k_host);
+
+    ENetPeer * peerx;
+    ENetHost * h = (ENetHost *)val_data(host);
+
+    for ( int count = 0; count < h->peerCount; count++)
+    {
+        peerx = & (h->peers[count]);
+
+        std::stringstream ss;
+        ss << peerx->address.host << ":" << peerx->address.port;
+
+        if (ss.str() == val_string(addnport))
+        {
+            if (val_bool(force) == true)
+            {
+                enet_peer_reset (peerx);
+            }
+
+            else
+            {
+                enet_peer_disconnect (peerx, 0);
+            }
+        }
+    }
+}
+
 static value enet_send_packet( value host, value addnport, value Channel, value content, value flags )
 {
+    val_check(addnport, string);
+    val_check(Channel, int);
+    val_check(content, string);
+    val_check(flags, int);
+    val_is_kind(host, k_host);
+
     ENetPeer * peerx;
     ENetHost * h = (ENetHost *)val_data(host);
 
@@ -200,17 +249,46 @@ static value enet_send_packet( value host, value addnport, value Channel, value 
         ss << peerx->address.host << ":" << peerx->address.port;
 
         if (ss.str() == val_string(addnport))
+        {
             enet_peer_send (peerx, channel, packet);
+
+            return(alloc_int(peerx->roundTripTime));
+        }
     }
 }
 
-int main()
+static void enet_destroy_event( value e )
 {
-    printf("Hello world!\n");
+    val_is_kind(e, k_event);
 
-    getch();
+    ENetEvent *event;
+    event = (ENetEvent *)val_data(e);
 
-    return 0;
+    if(event->packet != NULL)
+        enet_packet_destroy (event->packet);
+}
+
+static value enet_send_oob(value h, value ip, value port, value data)
+{
+        val_check_kind(h, k_host);
+        val_check(data, string);
+        val_check(port, int);
+        val_check(ip, string);
+
+        ENetAddress address;
+        ENetHost *host;
+        ENetBuffer buf;
+
+        host = (ENetHost *)val_data(h);
+
+        address.port = (enet_uint16)val_int(port);
+        enet_address_set_host(&address, val_string(ip));
+
+        buf.data = (char*)val_string(data);
+        buf.dataLength = val_strlen(data);
+
+        enet_socket_send (host->socket, &address, &buf, 1);
+        return val_true;
 }
 
 DEFINE_PRIM(enet_init, 0);
@@ -222,5 +300,8 @@ DEFINE_PRIM(enet_event_type, 1);
 DEFINE_PRIM(enet_event_channel, 1);
 DEFINE_PRIM(enet_event_message, 1);
 DEFINE_PRIM(enet_event_peer, 1);
+DEFINE_PRIM(enet_destroy_event, 1);
 
 DEFINE_PRIM(enet_send_packet, 5);
+DEFINE_PRIM(enet_send_oob, 4);
+DEFINE_PRIM(enet_disconnect_peer, 3);
