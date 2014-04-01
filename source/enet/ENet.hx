@@ -40,6 +40,7 @@ class ENet
 	/**
 	 * Bind the server. 
 	 * Returns an ENetHost* (C object, to pass to other functions like sendMsg)
+	 * @param	IP	The IP address to bind to in xxx.xxx.xxx.xxx format (pass in null to bind to all available interfaces)
 	 */
 	static public function server(IP:String = null, Port:Int = 0, Channels:Int = 2, Players:Int = 32):Dynamic
 	{
@@ -50,6 +51,7 @@ class ENet
 	 * Connect a client to the provided address. 
 	 * The client binds to all interfaces, on a random available port. 
 	 * Returns an ENetHost* (C object, to pass to other functions like sendMsg)
+	 * @param	IP	The remote host's IP address in xxx.xxx.xxx.xxx format
 	 */
 	static public function client(IP:String = null, Port:Int = 0, Channels:Int = 2, Players:Int = 1):Dynamic
 	{
@@ -118,7 +120,7 @@ class ENet
 	 * keeps the ball rolling, call this regularly, like in your Flixel update function
 	 * 
 	 * @param	Host	An ENetHost*
-	 * @param	Address	Client's IP
+	 * @param	Address	Client's IP, in int_32 format (decimal/long ip format, not dotted quad)
 	 * @param	Port	Client's port
 	 * @param	Content The string to send
 	 * @param	Channel Which channel to send through
@@ -145,6 +147,7 @@ class ENet
 	 * keeps the ball rolling, call this regularly, like in your Flixel update function
 	 * 
 	 * @param	Host	An ENetHost*
+	 * @param	Address The peer's IP, in int_32 format (decimal/long ip format, not dotted quad)
 	 * @param	Force   Wether the peer will be notified of the disconnection or just outright dropped off the host	
 	 */
 	static public function peerDisconnect(Host:Dynamic, Address:String, Port:Int, Force:Bool):Void
@@ -156,6 +159,7 @@ class ENet
 	 * Creates a sort of hash string out of an address and a port, 
 	 * usefull for maintaining a Map<String, Peer> sort of thing, 
 	 * whatever peer may be.
+	 * @param	Address The peer's IP, in int_32 format (decimal/long ip format, not dotted quad)
 	 */
 	static public function peerKey(Address:String, Port:Int):String
 	{

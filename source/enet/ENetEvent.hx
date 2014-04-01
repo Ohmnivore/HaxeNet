@@ -19,7 +19,7 @@ class ENetEvent
 	public var message:String = null;
 	
 	/**
-	 * The peer's ip address, in int_32 format
+	 * The peer's IP, in int_32 format (decimal/long ip format, not dotted quad)
 	 */
 	public var address:String = null;
 	

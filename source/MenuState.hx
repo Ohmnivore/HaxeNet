@@ -1,5 +1,6 @@
 package;
 
+import enet.Message;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxState;
@@ -32,6 +33,13 @@ class MenuState extends FlxState
 		FlxG.autoPause = false;
 		
 		ENet.init();
+		
+		var m:Message = new Message(0, ["posx", "posy"]);
+		m.data.set("posx", 5);
+		
+		trace(m.serialize());
+		
+		//trace(separateMessage("1.hello"));
 	}
 	
 	/**
