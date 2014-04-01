@@ -6,7 +6,13 @@ package enet;
  */
 class Client extends enet.NetBase
 {
-	public function new(IP:String = null, Port:Int = 0, Channels:Int = 2, Players:Int = 1) 
+	/**
+	 * Creates a new client, and connects it.
+	 * 
+	 * @param	IP		The IP to connect to (in dotted quad format)
+	 * @param	Port	The port to connect to
+	 */
+	public function new(IP:String, Port:Int, Channels:Int = 2, Players:Int = 1) 
 	{
 		super();
 		

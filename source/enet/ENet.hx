@@ -115,17 +115,15 @@ class ENet
 	}
 	
 	/**
-	 * This function returns an event, but also handles ENet's internal protocol. 
-	 * Buffered messages are sent out when this function is called. Because it 
-	 * keeps the ball rolling, call this regularly, like in your Flixel update function
+	 * Does what it says. Also returns the target client's RTT.
 	 * 
 	 * @param	Host	An ENetHost*
 	 * @param	Address	Client's IP, in int_32 format (decimal/long ip format, not dotted quad)
 	 * @param	Port	Client's port
 	 * @param	Content The string to send
 	 * @param	Channel Which channel to send through
-	 * @param	ENet flags, use | to unite flags, if they don't conflict
-	 * @return	Returns the target client's RTT, divide by two to obtain the traditional "ping"
+	 * @param	Flags	ENet flags, use | to unite flags, if they don't conflict
+	 * @return	Returns the target client's RTT, divide it by two to obtain the traditional "ping"
 	 */
 	static public function sendMsg(Host:Dynamic, Address:String, Port:Int,
 		Content:String, Channel:Int = 0, Flags:Int = 0):Int
@@ -142,9 +140,9 @@ class ENet
 	}
 	
 	/**
-	 * This function returns an event, but also handles ENet's internal protocol. 
-	 * Buffered messages are sent out when this function is called. Because it 
-	 * keeps the ball rolling, call this regularly, like in your Flixel update function
+	 * Disconnects a connected peer, smoothly or forcefully.
+	 * The advantage of smoothly disconnecting is that the peer
+	 * will be notified of the disconnection.
 	 * 
 	 * @param	Host	An ENetHost*
 	 * @param	Address The peer's IP, in int_32 format (decimal/long ip format, not dotted quad)

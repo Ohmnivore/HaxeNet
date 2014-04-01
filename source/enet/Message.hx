@@ -8,16 +8,40 @@ import haxe.Unserializer;
  */
 class Message
 {
+	/**
+	 * Unique identifier of this message. MUST be unique.
+	 */
 	public var ID:Int;
 	
+	/**
+	 * Use this to obtain received data and set data to be sent.
+	 * As keys, use the strings you pass in the Fields array 
+	 * when you create the message.
+	 */
 	public var data:Map<String, Dynamic>;
 	
+	/**
+	 * Whether incoming packets can set this message's data's contents.
+	 * Set this to true if your server only sends out this message, and 
+	 * doesn't receive it.
+	 */
 	public var isServerSideOnly:Bool;
 	
+	/**
+	 * Internal, don't touch.
+	 */
 	private var fields:Array<String>;
 	
+	/**
+	 * Internal, don't touch.
+	 */
 	private var _arr:Array<Dynamic>;
 	
+	/**
+	 * @param	id		The message's ID. Every message should have an unique ID.
+	 * @param	Fields	An array of all the message's data object's fields
+	 * @param	IsServerSideOnly	If only a client may receive this message (necessary for security reasons)
+	 */
 	public function new(id:Int, Fields:Array<String>, IsServerSideOnly:Bool = false)
 	{
 		ID = id;
@@ -32,6 +56,9 @@ class Message
 		}
 	}
 	
+	/**
+	 * Internal, don't touch.
+	 */
 	public function serialize():String
 	{
 		_arr.splice(0, _arr.length);
@@ -48,6 +75,9 @@ class Message
 		return res += Serializer.run(_arr);
 	}
 	
+	/**
+	 * Internal, don't touch.
+	 */
 	public function unserialize(S:String):Void
 	{
 		_arr.splice(0, _arr.length);

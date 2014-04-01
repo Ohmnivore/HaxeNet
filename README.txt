@@ -13,14 +13,13 @@ To use this in your project, grab the /source/enet directory and put that in you
 Also, copy the .ndll from my /export/cpp/windows/bin directory to the directory containing your executable.
 
 All you need to send/receive messages is the collection of static methods found in ENet.hx, and the event class from ENetEvent.hx.
-But if you want a higher-level structure, use Client.hx and Server.hx. That part of the code isn't commented yet, however. I'll also add a small tutorial for that soon.
+But if you want a higher-level structure, use Client.hx and Server.hx. I'll also add a small tutorial for that soon.
 
 This is my first adventure in C/C++, so that part of the code might not be stellar.
 
 The .ndll provided has been compiled for Windows. I honestly don't know how to provide support for Linux and Mac, sorry. If someone could help for that it would be great.
 
 TODO:
-comments in NetBase.hx, Client.hx, Server.hx, and Message.hx
 tutorial for using Client.hx, Server.hx, and Message.hx
 make sure everything is garbage collected?
 Linux + Mac + Android? ndlls
