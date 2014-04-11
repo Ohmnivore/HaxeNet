@@ -64,11 +64,16 @@ class MenuState extends FlxState
 			
 			if (e.type != ENetEvent.E_NONE)
 			{
-				trace(e.type, e.address, e.port);
+				trace(e.type, e.ID);
 				
 				if (e.type == ENetEvent.E_CONNECT)
 				{
-					ENet.sendMsg(server, e.address, e.port, "Hullo there", 0, ENet.ENET_PACKET_FLAG_RELIABLE);
+					ENet.sendMsg(server, e.ID, "Hullo there", 0, ENet.ENET_PACKET_FLAG_RELIABLE);
+				}
+				
+				if (e.type == ENetEvent.E_RECEIVE)
+				{
+					trace(e.message, ENet.getPeerPing(e.ID));
 				}
 			}
 		}

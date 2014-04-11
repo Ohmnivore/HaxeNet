@@ -68,3 +68,73 @@
 
 1388700673 c:\users\ohmnivore\desktop\cppdev\enettesting\includes\hx\cffiapi.h
 
+1397174706 source:c:\users\ohmnivore\desktop\haxedev\enetwrap\c_source\main.cpp
+	<stdio.h>
+	<stdlib.h>
+	<conio.h>
+	<enet/enet.h>
+	<stdlib.h>
+	<string>
+	<sstream>
+	<map>
+	<hx/CFFI.h>
+
+1388069580 c:\users\ohmnivore\desktop\haxedev\enetwrap\c_source\includes\enet\enet.h
+	<stdlib.h>
+	"enet/win32.h"
+	"enet/unix.h"
+	"enet/types.h"
+	"enet/protocol.h"
+	"enet/list.h"
+	"enet/callbacks.h"
+
+1388069580 c:\users\ohmnivore\desktop\haxedev\enetwrap\c_source\includes\enet\win32.h
+	<stdlib.h>
+	<winsock2.h>
+
+1388069580 c:\users\ohmnivore\desktop\haxedev\enetwrap\c_source\includes\enet\unix.h
+	<stdlib.h>
+	<sys/time.h>
+	<sys/types.h>
+	<sys/socket.h>
+	<netinet/in.h>
+	<unistd.h>
+
+1388069580 c:\users\ohmnivore\desktop\haxedev\enetwrap\c_source\includes\enet\types.h
+
+1388069580 c:\users\ohmnivore\desktop\haxedev\enetwrap\c_source\includes\enet\protocol.h
+	"enet/types.h"
+
+1388069580 c:\users\ohmnivore\desktop\haxedev\enetwrap\c_source\includes\enet\list.h
+	<stdlib.h>
+
+1388069580 c:\users\ohmnivore\desktop\haxedev\enetwrap\c_source\includes\enet\callbacks.h
+	<stdlib.h>
+
+1388700673 c:\users\ohmnivore\desktop\haxedev\enetwrap\c_source\includes\hx\cffi.h
+	"OS.h"
+	<stdio.h>
+	<stdlib.h>
+	"CFFILoader.h"
+	"CFFIAPI.h"
+
+1388700673 c:\users\ohmnivore\desktop\haxedev\enetwrap\c_source\includes\hx\os.h
+	<stddef.h>
+	<stdint.h>
+	<errno.h>
+
+1388700673 c:\users\ohmnivore\desktop\haxedev\enetwrap\c_source\includes\hx\cffiloader.h
+	<android/log.h>
+	<windows.h>
+	<stdio.h>
+	<mach-o/dyld.h>
+	<dlfcn.h>
+	<stdio.h>
+	<stdlib.h>
+	<memory.h>
+	<hx/NekoFunc.h>
+
+1388700673 c:\users\ohmnivore\desktop\haxedev\enetwrap\c_source\includes\hx\nekofunc.h
+
+1388700673 c:\users\ohmnivore\desktop\haxedev\enetwrap\c_source\includes\hx\cffiapi.h
+

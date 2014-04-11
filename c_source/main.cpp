@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string>
 #include <sstream>
+#include <map>
 
 #define IMPLEMENT_API
 #include <hx/CFFI.h>
@@ -15,8 +16,14 @@ DEFINE_KIND(k_event);
 
 typedef enet_uint16 ENetPeerHandle;
 
+static std::map<int, ENetPeer *> Peers;
+static std::map<ENetPeer *, int> PeersReverse;
+static int PeerID;
+
 static value enet_init(void)
 {
+    PeerID = 1;
+
     int result = enet_initialize();
 
     if (result != 0)
@@ -127,9 +134,17 @@ static value enet_poll(value h, value timeout)
     res = enet_host_service ((ENetHost *)val_data(h), event, tout);
 
     if (event->type == ENET_EVENT_TYPE_CONNECT)
-        printf("Connected!\n");
+    {
+        Peers[PeerID] = event->peer;
+        PeersReverse[event->peer] = PeerID;
+        PeerID++;
+    }
+
     if (event->type == ENET_EVENT_TYPE_DISCONNECT)
-        printf("Disconnected!\n");
+    {
+        Peers.erase(PeersReverse[event->peer]);
+        PeersReverse.erase(event->peer);
+    }
 
     return alloc_abstract(k_event, event);
 }
@@ -183,46 +198,43 @@ static value enet_event_peer(value e)
     ENetEvent *event;
     event = (ENetEvent *)val_data(e);
 
-    std::stringstream ss;
-    ss << event-> peer-> address.host << ":" << event-> peer-> address.port;
-
-    return alloc_string(ss.str().c_str());
+    return alloc_int(PeersReverse[event->peer]);
 }
 
-static value enet_disconnect_peer( value host, value addnport, value force )
+static value enet_get_peer_ping(value ID)
 {
-    val_check(addnport, string);
+    val_check(ID, int);
+
+    ENetPeer * peer = Peers[val_int(ID)];
+
+    return alloc_int(peer->roundTripTime);
+}
+
+static value enet_disconnect_peer( value host, value ID, value force )
+{
+    val_check(ID, int);
     val_check(force, bool);
     val_is_kind(host, k_host);
 
     ENetPeer * peerx;
     ENetHost * h = (ENetHost *)val_data(host);
 
-    for ( int count = 0; count < h->peerCount; count++)
+    peerx = Peers[val_int(ID)];
+
+    if (val_bool(force) == true)
     {
-        peerx = & (h->peers[count]);
+        enet_peer_reset (peerx);
+    }
 
-        std::stringstream ss;
-        ss << peerx->address.host << ":" << peerx->address.port;
-
-        if (ss.str() == val_string(addnport))
-        {
-            if (val_bool(force) == true)
-            {
-                enet_peer_reset (peerx);
-            }
-
-            else
-            {
-                enet_peer_disconnect (peerx, 0);
-            }
-        }
+    else
+    {
+        enet_peer_disconnect (peerx, 0);
     }
 }
 
-static value enet_send_packet( value host, value addnport, value Channel, value content, value flags )
+static value enet_send_packet( value host, value ID, value Channel, value content, value flags )
 {
-    val_check(addnport, string);
+    val_check(ID, int);
     val_check(Channel, int);
     val_check(content, string);
     val_check(flags, int);
@@ -241,20 +253,8 @@ static value enet_send_packet( value host, value addnport, value Channel, value 
                                                 strlen (msg) + 1,
                                                 fl);
 
-    for ( int count = 0; count < h->peerCount; count++)
-    {
-        peerx = & (h->peers[count]);
-
-        std::stringstream ss;
-        ss << peerx->address.host << ":" << peerx->address.port;
-
-        if (ss.str() == val_string(addnport))
-        {
-            enet_peer_send (peerx, channel, packet);
-
-            return(alloc_int(peerx->roundTripTime));
-        }
-    }
+    peerx = Peers[val_int(ID)];
+    enet_peer_send (peerx, channel, packet);
 }
 
 static void enet_destroy_event( value e )
@@ -301,6 +301,7 @@ DEFINE_PRIM(enet_event_channel, 1);
 DEFINE_PRIM(enet_event_message, 1);
 DEFINE_PRIM(enet_event_peer, 1);
 DEFINE_PRIM(enet_destroy_event, 1);
+DEFINE_PRIM(enet_get_peer_ping, 1);
 
 DEFINE_PRIM(enet_send_packet, 5);
 DEFINE_PRIM(enet_send_oob, 4);

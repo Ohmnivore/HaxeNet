@@ -20,7 +20,7 @@ class GameClass extends FlxGame
 	 */
 	public function new()
 	{
-		OgmoLoader.initTilemaps();
+		//OgmoLoader.initTilemaps();
 		
 		FlxG.autoPause = false;
 		var stageWidth:Int = Lib.current.stage.stageWidth;
