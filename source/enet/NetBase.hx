@@ -34,7 +34,7 @@ class NetBase
 	 */
 	public function new() 
 	{
-		peers = new Map<String, Dynamic>();
+		peers = new Map<Int, Dynamic>();
 		messages = new Map<Int, Message>();
 	}
 	
@@ -143,7 +143,7 @@ class NetBase
 	 * @param	Flags	ENet flags, use | to unite flags, if they don't conflict
 	 * @return	Returns the target client's RTT, divide by two to obtain the traditional "ping"
 	 */
-	public function sendMsg(ID:Int, Channel:Int = 0, Flags:Int = 0):Void
+	public function sendMsg(ID:Int, MsgID:Int, Channel:Int = 0, Flags:Int = 0):Void
 	{
 		ENet.sendMsg(_host, ID, messages.get(MsgID).serialize(), Channel, Flags);
 	}
