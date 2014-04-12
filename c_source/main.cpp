@@ -117,10 +117,29 @@ static value enet_create_client( value Ip, value Port, value Channels, value Con
         return v;
 }
 
+static void enet_destroy_event( value e )
+{
+    val_check_kind(e, k_event);
+    if( !val_is_abstract(e) || !val_is_kind(e,k_event) )
+        return;
+
+    ENetEvent *event;
+    event = (ENetEvent *)val_data(e);
+    if (event == NULL)
+        return;
+
+    if(event->packet != NULL)
+        enet_packet_destroy (event->packet);
+
+    enet_free(event);
+
+    return;
+}
+
 static value enet_poll(value h, value timeout)
 {
     val_check(timeout, number);
-    val_is_kind(h, k_host);
+    val_check_kind(h, k_host);
 
     ENetEvent *event;
     int res;
@@ -142,16 +161,18 @@ static value enet_poll(value h, value timeout)
 
     if (event->type == ENET_EVENT_TYPE_DISCONNECT)
     {
-        Peers.erase(PeersReverse[event->peer]);
-        PeersReverse.erase(event->peer);
+        //Peers.erase(PeersReverse[event->peer]);
+        //PeersReverse.erase(event->peer);
     }
 
-    return alloc_abstract(k_event, event);
+    value v = alloc_abstract(k_event, event);
+    val_gc(v, enet_destroy_event);
+    return v;
 }
 
 static value enet_event_type(value e)
 {
-    val_is_kind(e, k_event);
+    val_check_kind(e, k_event);
 
     ENetEvent *event;
 
@@ -162,7 +183,7 @@ static value enet_event_type(value e)
 
 static value enet_event_channel(value e)
 {
-    val_is_kind(e, k_event);
+    val_check_kind(e, k_event);
 
     ENetEvent *event;
     enet_uint8 ch;
@@ -178,7 +199,7 @@ static value enet_event_channel(value e)
 
 static value enet_event_message(value e)
 {
-    val_is_kind(e, k_event);
+    val_check_kind(e, k_event);
 
     ENetEvent *event;
     unsigned char *str;
@@ -193,7 +214,7 @@ static value enet_event_message(value e)
 
 static value enet_event_peer(value e)
 {
-    val_is_kind(e, k_event);
+    val_check_kind(e, k_event);
 
     ENetEvent *event;
     event = (ENetEvent *)val_data(e);
@@ -214,7 +235,7 @@ static value enet_disconnect_peer( value host, value ID, value force )
 {
     val_check(ID, int);
     val_check(force, bool);
-    val_is_kind(host, k_host);
+    val_check_kind(host, k_host);
 
     ENetPeer * peerx;
     ENetHost * h = (ENetHost *)val_data(host);
@@ -238,7 +259,7 @@ static value enet_send_packet( value host, value ID, value Channel, value conten
     val_check(Channel, int);
     val_check(content, string);
     val_check(flags, int);
-    val_is_kind(host, k_host);
+    val_check_kind(host, k_host);
 
     ENetPeer * peerx;
     ENetHost * h = (ENetHost *)val_data(host);
@@ -255,17 +276,6 @@ static value enet_send_packet( value host, value ID, value Channel, value conten
 
     peerx = Peers[val_int(ID)];
     enet_peer_send (peerx, channel, packet);
-}
-
-static void enet_destroy_event( value e )
-{
-    val_is_kind(e, k_event);
-
-    ENetEvent *event;
-    event = (ENetEvent *)val_data(e);
-
-    if(event->packet != NULL)
-        enet_packet_destroy (event->packet);
 }
 
 static value enet_send_oob(value h, value ip, value port, value data)
