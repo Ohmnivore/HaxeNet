@@ -77,7 +77,8 @@ class ENetEvent
 				message = ENet.event_message(EventFromC);
 			}
 			
-			ENet.event_destroy(EventFromC);
+			//ENet.event_destroy(EventFromC);
 		}
+		ENet.event_destroy(EventFromC);
 	}
 }
