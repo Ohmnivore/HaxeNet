@@ -9,13 +9,18 @@ import flixel.ui.FlxButton;
 import flixel.util.FlxMath;
 import enet.ENet;
 import enet.ENetEvent;
+import enet.Server;
+import enet.Client;
+import enet.NetBase;
+import cpp.vm.Thread;
 
 /**
  * A FlxState which can be used for the game's menu.
  */
 class MenuState extends FlxState
 {
-	public var server:Dynamic = null;
+	public var server:TestServer = null;
+	public var client:TestClient = null;
 	
 	/**
 	 * Function that is called up when to state is created to set it up. 
@@ -32,14 +37,12 @@ class MenuState extends FlxState
 		super.create();
 		FlxG.autoPause = false;
 		
+		var t:FlxText = new FlxText(0, 0, FlxG.width, "", 12);
+		t.text = "Open the flixel debugger, and open the log. Then, press S to initiate a server. Open another instance of this program, open the debugger and the log, then press C to open a client. You should see lots of pretty stuff being printed to both logs.";
+		add(t);
+
 		ENet.init();
-		
-		var m:Message = new Message(0, ["posx", "posy"]);
-		m.data.set("posx", 5);
-		
-		trace(m.serialize());
-		
-		//trace(separateMessage("1.hello"));
+		Msg.initMsg();
 	}
 	
 	/**
@@ -58,32 +61,43 @@ class MenuState extends FlxState
 	{
 		super.update();
 		
-		if (server != null)
+		if (FlxG.keys.pressed.S && server == null)
 		{
-			var e:ENetEvent = ENet.poll(server, 0);
-			
-			if (e.type != ENetEvent.E_NONE)
-			{
-				trace(e.type, e.ID);
-				
-				if (e.type == ENetEvent.E_CONNECT)
-				{
-					ENet.sendMsg(server, e.ID, "Hullo there", 0, ENet.ENET_PACKET_FLAG_RELIABLE);
-				}
-				
-				if (e.type == ENetEvent.E_RECEIVE)
-				{
-					trace(e.message, ENet.getPeerPing(e.ID));
-				}
-			}
+			server = new TestServer(null, 1234, 2, 32);
+			Msg.addToHost(server);
+			Thread.create(updateServer);
+			trace("Launched server.");
 		}
 		
-		else
+		if (FlxG.keys.pressed.C && client == null)
 		{
-			if (FlxG.keys.justPressed.S)
-				server = ENet.server(null, 1234, 1, 1);
-			if (FlxG.keys.justPressed.C)
-				server = ENet.client("", 1234, 1, 1);
+			client = new TestClient("", 1234, 2, 1);
+			Msg.addToHost(client);
+			Thread.create(updateClient);
+			trace("Launched client.");
 		}
-	}	
+	}
+
+	//Threading stuff
+	public function updateClient():Void
+	{
+		while (true)
+		{
+			updateHost(client);
+		}
+	}
+
+	public function updateServer():Void
+	{
+		while (true)
+		{
+			updateHost(server);
+		}
+	}
+
+	public function updateHost(Host:enet.NetBase):Void
+	{
+		Host.poll();
+		Sys.sleep(0.001);
+	}
 }
