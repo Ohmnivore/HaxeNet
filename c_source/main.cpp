@@ -6,6 +6,7 @@
 #include <string>
 #include <sstream>
 #include <map>
+#include <Winsock2.h>
 
 #define IMPLEMENT_API
 #include <hx/CFFI.h>
@@ -278,6 +279,47 @@ static value enet_send_packet( value host, value ID, value Channel, value conten
     enet_peer_send (peerx, channel, packet);
 }
 
+static value enet_get_printable_ip()
+{
+      char name[30];
+      struct sockaddr_in addr;
+
+      gethostname(name,sizeof(name));
+
+      struct hostent *hostEntry=0;
+      struct in_addr ia;
+
+      // From the Unix network FAQ (www.unixguide.net/network/socketfaq/)
+      // First try it as aaa.bbb.ccc.ddd.
+      ia.s_addr=inet_addr(name);
+      if(ia.s_addr!=INADDR_NONE)
+      {
+        // Got it...
+        addr.sin_addr.s_addr=ia.s_addr;
+        return alloc_string(inet_ntoa(addr.sin_addr));
+      }
+      // Next, try just gethostbyname()
+      hostEntry=gethostbyname(name);
+      if(hostEntry)
+      {
+        addr.sin_addr.s_addr=*(int*)hostEntry->h_addr_list[0];
+        return alloc_string(inet_ntoa(addr.sin_addr));
+      }
+
+      if(!hostEntry)
+      {
+        return FALSE;
+      }
+      // Retrieve address (IPv4)
+      addr.sin_addr.s_addr=*(int*)hostEntry->h_addr_list[0];
+      return alloc_string(inet_ntoa(addr.sin_addr));
+}
+
+//static value enet_get_broadcast_ip()
+//{
+//    return alloc_string(inet_ntoa(INADDR_BROADCAST));
+//}
+
 static value enet_send_oob(value h, value ip, value port, value data)
 {
         val_check_kind(h, k_host);
@@ -312,6 +354,8 @@ DEFINE_PRIM(enet_event_message, 1);
 DEFINE_PRIM(enet_event_peer, 1);
 DEFINE_PRIM(enet_destroy_event, 1);
 DEFINE_PRIM(enet_get_peer_ping, 1);
+DEFINE_PRIM(enet_get_printable_ip, 0);
+//DEFINE_PRIM(enet_get_broadcast_ip, 0);
 
 DEFINE_PRIM(enet_send_packet, 5);
 DEFINE_PRIM(enet_send_oob, 4);
