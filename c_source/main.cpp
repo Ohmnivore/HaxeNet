@@ -137,6 +137,11 @@ static void enet_destroy_event( value e )
     return;
 }
 
+void finalize( value v )
+{
+    free( val_data(v) );
+}
+
 static value enet_poll(value h, value timeout)
 {
     val_check(timeout, number);
@@ -167,7 +172,7 @@ static value enet_poll(value h, value timeout)
     }
 
     value v = alloc_abstract(k_event, event);
-    val_gc(v, enet_destroy_event);
+    val_gc(v, finalize);
     return v;
 }
 

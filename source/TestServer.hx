@@ -49,5 +49,7 @@ class TestServer extends Server
 			Msg.msg.data.set("test4", "And our love become a funeral pyre ");
 			sendMsg(clientID, Msg.msg.ID, 0, ENet.ENET_PACKET_FLAG_RELIABLE);
 		}
+		
+		E = null;
 	}
 }

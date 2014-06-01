@@ -48,5 +48,7 @@ class TestClient extends Client
 				);
 			peerDisconnect(serverID, false);
 		}
+		
+		E = null;
 	}
 }
