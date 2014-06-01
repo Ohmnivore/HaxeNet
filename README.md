@@ -1,5 +1,7 @@
 # Here be Haxe bindings for [ENet](https://github.com/lsalzman/enet)!
 
+HaxeNet was developed for my game [SkullRush](https://github.com/Ohmnivore/SkullRush).
+
 ENet is a really solid reliable/unreliable UDP implementation written in C.
 
 Some familiarity with ENet might help.
