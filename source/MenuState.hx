@@ -63,7 +63,7 @@ class MenuState extends FlxState
 		
 		if (FlxG.keys.pressed.S && server == null)
 		{
-			server = new TestServer(null, 1234, 2, 32);
+			server = new TestServer("localhost", 1234, 2, 32);
 			Msg.addToHost(server);
 			Thread.create(updateServer);
 			trace("Launched server.");
@@ -71,7 +71,7 @@ class MenuState extends FlxState
 		
 		if (FlxG.keys.pressed.C && client == null)
 		{
-			client = new TestClient("", 1234, 2, 1);
+			client = new TestClient("localhost", 1234, 2, 1);
 			Msg.addToHost(client);
 			Thread.create(updateClient);
 			trace("Launched client.");
