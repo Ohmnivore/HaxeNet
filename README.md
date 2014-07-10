@@ -9,7 +9,7 @@ Some familiarity with ENet might help.
 With these wrappers, you should be able to release online multiplayer games for Haxe's C++ target.
 I wrote this with HaxeFlixel in mind, but you should be able to use just about any other game engine that supports the C++ target.
 
-## PC Instructions:
+## Windows Instructions:
 
 * To use this in your project, grab the /source/enet directory and put that in your source directory.
 * Also, copy the .ndll from my /export/cpp/windows/bin directory to the directory containing your executable. (32-bit ndll)
@@ -20,7 +20,7 @@ This is my first adventure in C/C++, so that part of the code might not be stell
 
 The .ndll provided has been compiled for Windows. I honestly don't know how to provide support for Linux and Mac, sorry. If someone could help for that it would be great.
 
-## Mac Instructions
+## Mac Instructions - thanks to Robochase6000
 
 Mac support is a bit weak right now, but it's coming together.
 
